@@ -1,0 +1,164 @@
+﻿@model Task5.Models.Match
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Match</h4>
+    <input type="text" id="teamId" name="@Html.DisplayFor(model => model.MatchId)" hidden="hidden">
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.HostTeam)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.HostTeam.Name)
+            <button id="addHost" data-target="#addHostModal" data-toggle="modal">Add goal</button>
+
+            <div class="modal fade" id="addHostModal" tabindex="-1" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <select id="selectHost" class="form-control">
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="saveHostGoal" type="button" class="btn btn-primary">Save</button>
+                            <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="text" id="hostTeamId" name="@Html.DisplayFor(model => model.HostTeam.TeamId)" hidden="hidden">
+
+            <div id="hostPlayers"></div>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GuestTeam)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GuestTeam.Name)
+
+            <button id="addGuest" data-target="#addGuestModal" data-toggle="modal">Add goal</button>
+
+            <div class="modal fade" id="addGuestModal" tabindex="-1" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <select id="selectGuest" class="form-control">
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="saveGuestGoal" type="button" class="btn btn-primary">Save</button>
+                            <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="text" id="guestTeamId" name="@Html.DisplayFor(model => model.GuestTeam.TeamId)" hidden="hidden">
+
+            <div id="guestPlayers"></div>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Result)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Result)
+        </dd>
+    </dl>
+</div>
+<div>
+    <button id="finishMatch">Finish</button>
+    <button id="cancleMatch">Cancle</button>
+</div>
+<script type="text/javascript">
+    var finishMatch = document.getElementById("finishMatch");
+    var cancleMatch = document.getElementById("cancleMatch");
+    var teamId =document.getElementById("teamId").name;
+
+    finishMatch.addEventListener("click", function () {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                window.open("https://localhost:5001/Matches", "_self");
+            }
+        };
+        var path = "https://localhost:5001/Matches/FinishMatch/" + teamId;
+            request.open("GET", path, true);
+            request.send(null);
+    });
+
+    cancleMatch.addEventListener("click", function () {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                window.open("https://localhost:5001/Matches", "_self");
+            }
+        };
+        var path = "https://localhost:5001/Matches/CancleMatch/" + teamId;
+            request.open("GET", path, true);
+            request.send(null);
+    });
+
+
+    var saveHostGoal = document.getElementById("saveHostGoal");
+    var saveGuestGoal = document.getElementById("saveGuestGoal");
+    saveHostGoal.addEventListener("click", function () {
+        var playerId = parseInt(document.getElementById("selectHost").value);
+         var request = new XMLHttpRequest();
+         request.onreadystatechange = function () {
+             if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                  window.open("https://localhost:5001/Matches/Details/" + teamId, "_self");
+            }
+         };
+        var path = "https://localhost:5001/Goals/AddGoal?idMatch="+teamId+"&idPlayer="+playerId;
+        request.open("GET", path, true);
+        request.send(null);
+
+
+    });
+    saveGuestGoal.addEventListener("click", function () {
+        var playerId = parseInt(document.getElementById("selectGuest").value);
+        var request = new XMLHttpRequest();
+         request.onreadystatechange = function () {
+             if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                 window.open("https://localhost:5001/Matches/Details/" + teamId, "_self");
+            }
+         };
+        var path = "https://localhost:5001/Goals/AddGoal?idMatch="+teamId+"&idPlayer="+playerId;
+        request.open("GET", path, true);
+        request.send(null);
+
+    });
+
+
+
+    var hostId = parseInt(document.getElementById("hostTeamId").name);
+    var guestId = parseInt(document.getElementById("guestTeamId").name);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+            if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                var result = JSON.parse(request.response);
+                var res = result.result;
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].player.teamId == hostId) {
+                        document.getElementById("hostPlayers").innerHTML += "<p>" + res[i].player.name + "(" + res[i].numberOfGoals + ")</p><br/>";
+                        document.getElementById("selectHost").innerHTML += "<option value=\""+res[i].player.playerId+"\">"+res[i].player.name+"</option>";
+                    }else if (res[i].player.teamId == guestId) {
+                        document.getElementById("guestPlayers").innerHTML += "<p>" + res[i].player.name + "(" + res[i].numberOfGoals + ")</p><br/>";
+                        document.getElementById("selectGuest").innerHTML += "<option value=\""+res[i].player.playerId+"\">"+res[i].player.name+"</option>";
+                    }
+                }
+                
+            }
+    };
+    var path = "https://localhost:5001/Matches/GetGoalsByMatch/" + teamId;
+        request.open("GET", path, true);
+        request.send(null);
+
+</script>

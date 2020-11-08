@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Task5.Models.Player>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div>
+    <table>
+        <tr>
+
+            <th><p>@ViewBag.TeamName</p></th>
+            <th><img src="@ViewBag.TeamLogo" /></th>
+        </tr>
+        <tr></tr>
+    </table>
+</div>
+<p>Players:</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.PlayerId" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+
+    <button id="addPlayer" data-target="#addPlayerModal" data-toggle="modal">Add player</button>
+
+    <div class="modal fade" id="addPlayerModal" tabindex="-1" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form asp-action="AddPlayer">
+                        <div class="form-group">
+                            <input type="text" id="teamId" name="teamId" value="@ViewBag.TeamId" hidden="hidden">
+                            <input type="text" id="name" name="name" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <a asp-action="Cancle">Cancle</a>
+</div>
+

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Task5.Models.Match>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.HostTeam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GuestTeam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Place)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Result)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.statuss)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.HostTeam.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GuestTeam.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Place)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Result)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.statuss.Name)
+            </td>
+            <td>
+                @if (item.StatussId < 3)
+                {
+                    <a asp-action="Details" asp-route-id="@item.MatchId">Details</a>
+                }
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

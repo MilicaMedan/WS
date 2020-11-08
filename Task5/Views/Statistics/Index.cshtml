@@ -1,0 +1,66 @@
+﻿@model Task5.Models.Statistic
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Team</th>
+            <th>Number of wins</th>
+            <th>Number of draws</th>
+            <th>Number of losses</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.teamStatistics)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.team.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.numOfWins)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.numOfDraws)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.numOfLosses)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Matches</th>
+            <th>Goals</th>
+            <th>Team</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.playerStatistics)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.player.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.numOfMatches)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.numOfGoals)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.player.Team.Name)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

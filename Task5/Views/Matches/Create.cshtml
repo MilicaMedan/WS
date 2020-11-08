@@ -1,0 +1,136 @@
+﻿@model Task5.Models.Match
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Match</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <p class="text-danger">@ViewBag.Message</p>
+            <div class="form-group">
+                <label asp-for="HostTeamId" class="control-label"></label>
+                <select id="host" asp-for="HostTeamId" class="form-control" asp-items="ViewBag.HostTeamId"></select>
+                <input type="text" id="hostPlayersString" name="hostPlayersString" hidden="hidden">
+                <div id="hostPlayers">
+
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="GuestTeamId" class="control-label"></label>
+                <select id="guest" asp-for="GuestTeamId" class="form-control" asp-items="ViewBag.GuestTeamId"></select>
+                <input type="text" id="guestPlayersString" name="guestPlayersString" hidden="hidden">
+                <div id="guestPlayers">
+                    
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Time" class="control-label"></label>
+                <input asp-for="Time" class="form-control" />
+                <span asp-validation-for="Time" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Place" class="control-label"></label>
+                <input asp-for="Place" class="form-control" />
+                <span asp-validation-for="Place" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script type="text/javascript">
+    var hostPlayers = document.getElementById("hostPlayersString");
+    hostPlayers.value = "";
+    var guestPlayers = document.getElementById("guestPlayersString");
+    guestPlayers.value = "";
+    document.getElementById("host").addEventListener("change", function () {
+        hostPlayers.value = "";
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                var result = JSON.parse(request.response);
+                var res = result.result;
+                var elements = "";
+                for (var i = 0; i < res.length; i++) {
+                    elements += "<input type=\"checkbox\" id=\""+res[i].playerId+"\"><label for=\""+res[i].playerId+"\">"+res[i].name+"</label><br/>";
+                }
+                document.getElementById("hostPlayers").innerHTML = elements;
+                for (var i = 0; i < res.length; i++) {
+                    document.getElementById("" + res[i].playerId).addEventListener('change', function() {
+                        if (this.checked) {
+                            hostPlayers.value += "" + this.id + ",";
+                            console.log("host: "+hostPlayers.value);
+                        } else {
+                            var pom = hostPlayers.value.split(",");
+                            var pom1 = "";
+                            for (var j = 0; j < pom.length-1; j++) {
+                                if (pom[j] != this.id) {
+                                    pom1 += pom[j] + ",";
+                                }
+                            }
+                            hostPlayers.value = pom1;
+                            console.log("host: "+hostPlayers.value);
+                        }
+                    });
+                }
+            }
+        };
+        var path = "https://localhost:5001/Matches/GetPlayers/" + document.getElementById("host").value;
+        request.open("GET", path, true);
+        request.send(null);
+    });
+    document.getElementById("guest").addEventListener("change", function () {
+        guestPlayers.value = "";
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (request.readyState == XMLHttpRequest.DONE && request.status == 200) {
+                var result = JSON.parse(request.responseText);
+                var res = result.result;
+                var elements = "";
+                for (var i = 0; i < res.length; i++) {
+                    elements += "<input type=\"checkbox\" id=\""+res[i].playerId+"\"><label for=\""+res[i].playerId+"\">"+res[i].name+"</label><br/>";
+                }
+                document.getElementById("guestPlayers").innerHTML = elements;
+                for (var i = 0; i < res.length; i++) {
+                    document.getElementById("" + res[i].playerId).addEventListener('change', function() {
+                        if (this.checked) {
+                            guestPlayers.value += "" + this.id + ",";
+                            console.log("guest: "+guestPlayers.value);
+                        } else {
+                            var pom = guestPlayers.value.split(",");
+                            var pom1 = "";
+                            for (var j = 0; j < pom.length-1; j++) {
+                                if (pom[j] != this.id) {
+                                    pom1 += pom[j] + ",";
+                                }
+                            }
+                            guestPlayers.value = pom1;
+                            console.log("guest: "+guestPlayers.value);
+                        }
+                    });
+                }
+            }
+        };
+        var path = "https://localhost:5001/Matches/GetPlayers/" + document.getElementById("guest").value;
+        request.open("GET", path, true);
+        request.send(null);
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
